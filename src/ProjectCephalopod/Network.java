@@ -11,17 +11,15 @@ package ProjectCephalopod;
  */
 public class Network {
     
-    private int inputSize;
-    private int hiddenSize;
+    private int inputSize = 8;
+    private int hiddenSize = (inputSize + outputSize) / 2; //experiment
     private int outputSize = 1;
     
-    private int[][] input; 
-    private int[][] inputLayer; 
-    private int[] output = new int[2];
-    private int[] outputLayer;
-    private int[][] hiddenLayer; //1 for now
-    private int[][] synapse1;
-    private int[][] synapse2;
+    private int[][] input = new int[1][inputSize]; 
+    private int[][] output = new int[1][outputSize];
+    private int[][] hiddenLayer = new int[hiddenSize][1]; //1 hidden layer
+    private int[][] synapse0 = new int[inputSize][hiddenSize];
+    private int[][] synapse1 = new int[hiddenSize][outputSize];
     private int iterations = 100000;
     
     public Network(){
@@ -39,12 +37,16 @@ public class Network {
     }
     
     private void initWeights(){
+        //random
         //synapse1 = random 
         //synapse2 = random
     }
     
     private void feedForward(){
-        
+        //hidden = input * synapse1 + bias1
+        //hidden = squash hidden
+        //output = hidden * synapse 2 + bias2
+        //output = squash output
     }
     
     private void calcError(){
@@ -54,6 +56,15 @@ public class Network {
     private void updateWeights(){
         //delta //error*squash(layer)
         squash(1);
+    }
+    
+    private void multiply(int size1, int size2){
+        
+        for(int i = 0; i < size1; i++){
+            for(int j = 0; j < size2; j++){
+                //stuff
+            }
+        }
     }
     
 }
