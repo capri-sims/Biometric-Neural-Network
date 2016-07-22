@@ -16,6 +16,7 @@ public class Network {
     private int hiddenSize = (inputSize + outputSize) / 2; //experiment
 
     private double[] expectedOutput = new double[outputSize];
+    private double learningRate = .1; //TODO: find learning rate
     
     private double[] input = new double[inputSize]; 
     private double[] output = new double[outputSize];
@@ -91,8 +92,51 @@ public class Network {
     }
     
     private void updateWeights(){
-        //delta //error*squash(layer)
-        squash(1);
+        
+        double error1 = 0;
+        double error0 = 0;
+        double[] delta1 = new double[outputSize];
+        double[] delta0 = new double[hiddenSize];
+        double change0 = 0;
+        double change1 = 0;
+        
+        //FIND ERROR FOR OUTPUT
+        for(int i = 0; i < outputSize; i++){
+            error1 += expectedOutput[i] - output[i];
+        }
+        //FIND DELTA FOR OUTPUT
+        for(int i = 0; i < outputSize; i++){
+            delta1[i] = (1 - Math.pow(Math.tan(output[i]), 2)) * error1; 
+        }
+        
+        //FIND ERROR FOR HIDDEN
+        for(int i = 0; i < hiddenSize; i++){
+            for(int j = 0; j < outputSize; j++){ //E delta * weights
+                error0 += delta1[j] * synapse1[i][j]; //?
+            }
+        }
+        //FIND DELTA FOR HIDDEN
+        for(int i = 0; i < hiddenSize; i++){
+            delta0[i] = (1 - Math.pow(Math.tan(hidden[i]), 2)) * error0; 
+        }
+        
+        //UPDATE SYNAPSE1
+        for(int i = 0; i < outputSize; i++){
+            for(int j = 0; j < hiddenSize; j++){
+                change1 = delta1[i] * hidden[j];
+                synapse1[i][j] += learningRate * change1;
+            }
+        }
+        
+        //UPDATE SYNAPSE0
+        for(int i = 0; i < hiddenSize; i++){
+            for(int j = 0; j < inputSize; j++){
+                change0 = delta0[j] * hidden[i];
+                synapse0[i][j] += learningRate * change0;
+            }
+        }
+        
+        
     }
 
     
