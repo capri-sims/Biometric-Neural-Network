@@ -78,6 +78,7 @@ public class GUI extends JFrame{
         newMenu.addMenuListener(new MenuListener() {
 
             public void menuSelected(MenuEvent e) {
+                created = false;
                 fileReader();
                 if(successful){
                     NN = new Network(input);
@@ -110,23 +111,24 @@ public class GUI extends JFrame{
         });
         
         testMenu.addMenuListener(new MenuListener() {
-            public void actionPerformed(MenuEvent e) { 
+
+            public void menuSelected(MenuEvent e) {
                 if(created){
                     text.setText("Enter new input values.");
                     fileReader(); 
-                    NN.run();   
+                    NN.run(input);   
                 }
                 else{
                     text.setText("Create a new network first!");
                 }
             }
-            public void menuSelected(MenuEvent e) {}
             public void menuDeselected(MenuEvent e) {}
             public void menuCanceled(MenuEvent e) {}
         });
                 
         saveMenu.addMenuListener(new MenuListener() {
-            public void actionPerformed(MenuEvent e) { 
+
+            public void menuSelected(MenuEvent e) {
                 if(created){
                     
                 }
@@ -134,7 +136,6 @@ public class GUI extends JFrame{
                     text.setText("Create a new network first!");
                 }
             }
-            public void menuSelected(MenuEvent e) {}
             public void menuDeselected(MenuEvent e) {}
             public void menuCanceled(MenuEvent e) {}
         });
@@ -184,6 +185,7 @@ public class GUI extends JFrame{
             input[i++] = second;
         }
         successful = true;
+        
     }
     
     public void setText(String words){
@@ -207,7 +209,7 @@ public class GUI extends JFrame{
         }
       
         output[0] = num;
-
+        text.setText("Training...");
         NN.train(output);
         
         toTrain = false;

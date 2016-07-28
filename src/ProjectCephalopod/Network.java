@@ -5,6 +5,7 @@
  */
 package ProjectCephalopod;
 
+import static java.lang.Math.abs;
 import java.util.Random;
 import javax.swing.JTextArea;
 
@@ -70,10 +71,10 @@ public class Network {
         this.expectedOutput = expectedOutput;
         start = 0;
         //TRAINING
-        for(int j = 0; j < epochSize; j ++)
+        for(int j = 0; j < epochSize; j ++){
             //for(int i = 0; i < iterations; i++){ //or error reaches x?
-            while(abs(calcError()) > 1E-5) //Correct cutoff?
-                System.out.println(j + " : " + i);
+            while(abs(calcError()) > 1E-6){ //Correct cutoff?
+                
                 feedForward();
                 text.setText("Training Result " + j + " : " + output[0]);
                 feedBackwards();
@@ -82,10 +83,20 @@ public class Network {
         start += 30;
         
         //System.out.println(output[0]);
+        }
     }
     
-    public void run(){
+    public void run(double[] input){
+        this.input = input;
+        totalSize = input.length;
+        normalize();
         start = 0;
+        
+        epochSize = totalSize / inputSize;
+        if((totalSize % inputSize) != 0){
+            epochSize += 1;
+        }
+
         for(int i = 0; i < epochSize; i++){
             feedForward();
             //System.out.println("Result: " + output[0]);
@@ -151,7 +162,7 @@ public class Network {
         num += bias1; //add bias
         output[0] = sigmoid(num); //squashed
         
-        System.out.println(output[0] + " | Error: " + (expectedOutput[0] - output[0])); //DEBUGGER
+        //System.out.println(output[0] + " | Error: " + (expectedOutput[0] - output[0])); //DEBUGGER
     }
 
     private void feedBackwards(){
@@ -232,6 +243,6 @@ public class Network {
     private double calcError(){
         return Math.pow(expectedOutput[0] - output[0], 2); 
     }
-
     
 }
+
