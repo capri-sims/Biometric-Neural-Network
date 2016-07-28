@@ -16,9 +16,13 @@ public class ProjectCephalopod {
 
     public static void main(String[] args) {
         
-        double[] input = {-.2, 1.15, .678, -.5};
-        double[] output = {.6};
-        Network NN = new Network(input, output);
+//        double[] input = {-.2, 1.15, .678, -.5};
+//        double[] output = {1};
+//        Network NN = new Network(input);
+//        NN.train(output);
+
+        GUI box = new GUI();
+        
   
         
     }
