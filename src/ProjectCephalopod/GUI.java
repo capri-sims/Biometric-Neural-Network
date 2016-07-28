@@ -83,6 +83,7 @@ public class GUI extends JFrame{
                     NN = new Network(input);
                     created = true;
                     text.setText("Network Created!");
+                    NN.setTextBox(text);
                 }
                 else{
                     text.setText("Try again!");
@@ -111,7 +112,9 @@ public class GUI extends JFrame{
         testMenu.addMenuListener(new MenuListener() {
             public void actionPerformed(MenuEvent e) { 
                 if(created){
-                    
+                    text.setText("Enter new input values.");
+                    fileReader(); 
+                    NN.run();   
                 }
                 else{
                     text.setText("Create a new network first!");
@@ -159,21 +162,28 @@ public class GUI extends JFrame{
         List<String> text = new ArrayList<>();
         try{ 
             text = Files.readAllLines(file);
-            successful = true;
         }
         catch(Exception ex){ System.err.println(ex); }
+        
+        int inputSize = 0;
+        for(String line : text){
+            inputSize += 2;
+        }
+        
+        input = new double[inputSize];
         
         int i = 0;
         //boolean firstChar = true; //because for some reason, the first char is always some kind of dot that resists removal
         for(String line : text){ 
             //System.out.println(line); //DEBUGGER
             double first = Double.valueOf(line.substring(0, 2)); 
-            System.out.println(first); //DEBUGGER
+            //System.out.println(first); //DEBUGGER
             int index = line.indexOf('\t') + 1;
             double second = Double.valueOf(line.substring(index));
             input[i++] = first;
             input[i++] = second;
-        }      
+        }
+        successful = true;
     }
     
     public void setText(String words){

@@ -71,15 +71,17 @@ public class Network {
         start = 0;
         //TRAINING
         for(int j = 0; j < epochSize; j ++)
-            for(int i = 0; i < iterations; i++){ //or error reaches x?
+            //for(int i = 0; i < iterations; i++){ //or error reaches x?
+            while(abs(calcError()) > 1E-5) //Correct cutoff?
+                System.out.println(j + " : " + i);
                 feedForward();
-                //calcError();
-                feedBackwards();
                 text.setText("Training Result " + j + " : " + output[0]);
-                start += 30;
+                feedBackwards();
+                
             }
+        start += 30;
         
-        System.out.println(output[0]);
+        //System.out.println(output[0]);
     }
     
     public void run(){
@@ -95,10 +97,6 @@ public class Network {
     public void setInput(double[] input){
         this.input = input;
     }
-    
-//    private double tanhPrime(double n){
-//        return (1 - Math.pow(Math.tan(n), 2));
-//    }
     
     private double sigmoid(double n){
         return (1.0 /(1.0 + Math.pow(Math.E, -n)));
@@ -153,39 +151,20 @@ public class Network {
         num += bias1; //add bias
         output[0] = sigmoid(num); //squashed
         
-        //System.out.println(output[0] + " | Error: " + (expectedOutput[0] - output[0]));
+        System.out.println(output[0] + " | Error: " + (expectedOutput[0] - output[0])); //DEBUGGER
     }
-    
-//    private void calcError(){
-//        //error = output - calculated Output
-//        double error = 0;
-//        
-//        for(int i = 0; i < outputSize; i++){
-//            error += expectedOutput[i] - output[i];
-//        }
-//    }
-    
+
     private void feedBackwards(){
         
         double error = 0;
         double change = 0;
-        
-        //FIND ERROR FOR OUTPUT
-//        for(int i = 0; i < outputSize; i++){
-//            error1 += expectedOutput[i] - output[i];
-//        }
+
         //FIND DELTA FOR OUTPUT
         for(int i = 0; i < outputSize; i++){
             error = expectedOutput[i] - output[i];
             delta1[i] = sigmoidPrime(output[i]) * error; 
         }
         
-        //FIND ERROR FOR HIDDEN
-//        for(int i = 0; i < hiddenSize; i++){
-//            for(int j = 0; j < outputSize; j++){ //E delta * weights
-//                error0 += delta1[j] * synapse1[i][j]; //?
-//            }
-//        }
         //FIND DELTA FOR HIDDEN
         for(int i = 0; i < hiddenSize; i++){
             delta0[i] = sigmoidPrime(hidden[i]) * sumError(i); 
@@ -210,8 +189,6 @@ public class Network {
                 //System.out.println("Synapse0[" + j + "][" + i + "] = " + synapse0[j][i]); //DEBUGGER
             }
         }
-        
-        
     }
     
     private double sumError(int j){
@@ -244,11 +221,16 @@ public class Network {
         
         for(int i = 0; i < inputSize; i++){
             input[i] = (input[i] - min) / difference; //normalization
+            //System.out.println("Normalized: " + input[i]); //DEBUGGER
         }
     }
     
     public void setTextBox(JTextArea box){
         text = box;
+    }
+    
+    private double calcError(){
+        return Math.pow(expectedOutput[0] - output[0], 2); 
     }
 
     
