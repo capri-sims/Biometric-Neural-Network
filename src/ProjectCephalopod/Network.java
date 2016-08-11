@@ -1,33 +1,36 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/******************************************************
+***  Class Name: Network
+***  Class Author: Capri Sims
+******************************************************
+*** Purpose: Provide the methods for using a neural network
+******************************************************
+*** Date: June 21, 2016
+******************************************************
+*** TODO: Find best learning rate
+*         Find best hidden layer size
+*         Allow for different input formats
+*******************************************************/
 package ProjectCephalopod;
 
 import static java.lang.Math.abs;
 import java.util.Random;
 import javax.swing.JTextArea;
 
-/**
- *
- * @author Capri
- */
 public class Network {
     
     private int totalSize;
     private int inputSize;
     private int outputSize = 1;
-    private int hiddenSize; //experiment
+    private int hiddenSize; 
     private int epochSize;
     private int start;
 
     private double[] expectedOutput = new double[outputSize];
-    private double learningRate = .2; //TODO: find learning rate
+    private double learningRate = .2; 
     
     private double[] input; 
     private double[] output = new double[outputSize];
-    private double[] hidden; //1 hidden layer
+    private double[] hidden; 
     private double[][] synapse0;
     private double[][] synapse1;
     private double bias0;
@@ -48,12 +51,11 @@ public class Network {
         normalize();
         start = 0;
         
-        epochSize = totalSize / inputSize;
+        epochSize = totalSize / inputSize; //Breaks up total training input into chunks
         if((totalSize % inputSize) != 0){
             epochSize += 1;
         }
 
-        
         hiddenSize = (inputSize + outputSize) / 2;
         hidden = new double[hiddenSize];
         
@@ -67,29 +69,46 @@ public class Network {
 
     }
     
+    /******************************************************
+    ***  Method Name: train
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: To train the network with training input
+    *** Method Inputs: double[] expectedOutput
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     public void train(double[] expectedOutput){
         this.expectedOutput = expectedOutput;
         start = 0;
         //TRAINING
-        for(int j = 0; j < epochSize; j ++){
-            //for(int i = 0; i < iterations; i++){ //or error reaches x?
-            while(abs(calcError()) > 1E-6){ //Correct cutoff?
-                
+        for(int j = 0; j < epochSize; j ++) //For each chunk
+            while(abs(calcError()) > 1E-5) //Until error becomes sufficiently low
+                System.out.println(j + " : " + i);
                 feedForward();
                 text.setText("Training Result " + j + " : " + output[0]);
                 feedBackwards();
                 
             }
         start += 30;
-        
-        //System.out.println(output[0]);
-        }
     }
     
-    public void run(double[] input){
-        this.input = input;
-        totalSize = input.length;
-        normalize();
+    /******************************************************
+    ***  Method Name: run
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: To use the network after training
+    *** Method Inputs: None
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
+    public void run(){
         start = 0;
         
         epochSize = totalSize / inputSize;
@@ -105,18 +124,68 @@ public class Network {
         }
     }
     
+    /******************************************************
+    ***  Method Name: setInput
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: To set the input
+    *** Method Inputs: double[] input
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     public void setInput(double[] input){
         this.input = input;
     }
     
+    /******************************************************
+    ***  Method Name: sigmoid
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Provides activation function
+    *** Method Inputs: double n
+    *** Return value: double
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private double sigmoid(double n){
         return (1.0 /(1.0 + Math.pow(Math.E, -n)));
     }
     
+    /******************************************************
+    ***  Method Name: sigmoidPrime
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Provides the derivative of the activation function
+    ***          for back propagation 
+    *** Method Inputs: double n
+    *** Return value: double
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private double sigmoidPrime(double n){
         return (sigmoid(n)*(1-sigmoid(n)));
     }
     
+    /******************************************************
+    ***  Method Name: initWeights
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Initializes the weights in synapse0 and 
+    ***       synapse1 to random values between 0 and 1
+    *** Method Inputs: None
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private void initWeights(){
         
         Random random = new Random(); //random number generator 
@@ -139,6 +208,18 @@ public class Network {
         bias1 = 0;
     }
     
+    /******************************************************
+    ***  Method Name: feedForward
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Calculates the output based on the input
+    *** Method Inputs: None
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private void feedForward(){
         
         double num = 0;
@@ -164,7 +245,20 @@ public class Network {
         
         //System.out.println(output[0] + " | Error: " + (expectedOutput[0] - output[0])); //DEBUGGER
     }
-
+    
+    /******************************************************
+    ***  Method Name: feedBackwards
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Back propagates; Updates the weights for 
+    ***       training
+    *** Method Inputs: None
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private void feedBackwards(){
         
         double error = 0;
@@ -202,6 +296,18 @@ public class Network {
         }
     }
     
+    /******************************************************
+    ***  Method Name: sumError
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Calculates the error for a given node
+    *** Method Inputs: int j //the row
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private double sumError(int j){
         double sum = 0;
         
@@ -212,10 +318,18 @@ public class Network {
         return sum;
     }
     
-    public void setExpectedOutput(double[] output){
-        expectedOutput = output;
-    }
-    
+    /******************************************************
+    ***  Method Name: normalize
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Normalizes the input to a range between 0 and 1
+    *** Method Inputs: None
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private void normalize(){
         double min = 9999, max = 0, difference;
         
@@ -236,13 +350,20 @@ public class Network {
         }
     }
     
-    public void setTextBox(JTextArea box){
-        text = box;
-    }
-    
+    /******************************************************
+    ***  Method Name: calcError
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Calculates the total error of the network
+    *** Method Inputs: None
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private double calcError(){
         return Math.pow(expectedOutput[0] - output[0], 2); 
     }
     
 }
-
