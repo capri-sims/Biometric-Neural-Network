@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/******************************************************
+***  Class Name: GUI
+***  Class Author: Capri Sims
+******************************************************
+*** Purpose: Provides the GUI for the Neural Network
+******************************************************
+*** Date: June 21, 2016
+******************************************************
+*** TODO: Add Save & Load
+***       Add interface to database
+***       Clean interface
+*******************************************************/
 package ProjectCephalopod;
 
 import java.awt.BorderLayout;
@@ -26,10 +33,6 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-/**
- *
- * @author Capri
- */
 public class GUI extends JFrame{
     
     private double[] input;
@@ -43,12 +46,13 @@ public class GUI extends JFrame{
     public GUI(){
         super("Biometric Security");
         setLayout(new BorderLayout());
-        setSize(500, 700); //larger size for presentation??
+        setSize(500, 700); 
         setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         
         JPanel top = new JPanel(), bottom = new JPanel(); 
         
+        //TEXT AREA
         text = new JTextArea("Welcome! Please create a new network by clicking on 'New' above.", 35, 40);
         text.setEditable(true);
         text.setWrapStyleWord(true);
@@ -56,29 +60,31 @@ public class GUI extends JFrame{
         top.add(scroller);
         add(top, BorderLayout.NORTH);
         
+        //OK BUTTON
         JButton ok = new JButton("Enter");
         bottom.add(ok);
         bottom.setBorder(new EmptyBorder(20,20,20,20));
         add(bottom, BorderLayout.SOUTH);
         
+        //MENU BAR
         JMenuBar bar = new JMenuBar();
         JMenu newMenu = new JMenu("New");
         JMenu trainMenu = new JMenu("Train");
         JMenu testMenu = new JMenu("Test");
         JMenu saveMenu = new JMenu("Save");
+        JMenu loadMenu = new JMenu("Load");
         bar.add(newMenu);
         bar.add(trainMenu);
         bar.add(testMenu);
         bar.add(saveMenu);
+        bar.add(loadMenu);
         setJMenuBar(bar);
-        //NEEDS LOAD BUTTON
         
         setVisible(true);
         
-        newMenu.addMenuListener(new MenuListener() {
-
+        //NEW CLICKED
+        newMenu.addMenuListener(new MenuListener() { 
             public void menuSelected(MenuEvent e) {
-                created = false;
                 fileReader();
                 if(successful){
                     NN = new Network(input);
@@ -94,6 +100,7 @@ public class GUI extends JFrame{
             public void menuCanceled(MenuEvent e) {}
         });
         
+        //TRAIN CLICKED
         trainMenu.addMenuListener(new MenuListener() {
             public void menuSelected(MenuEvent e) {
                 
@@ -110,36 +117,54 @@ public class GUI extends JFrame{
             public void menuCanceled(MenuEvent e) {}
         });
         
+        //TEST CLICKED
         testMenu.addMenuListener(new MenuListener() {
-
-            public void menuSelected(MenuEvent e) {
+            public void actionPerformed(MenuEvent e) { 
                 if(created){
                     text.setText("Enter new input values.");
                     fileReader(); 
-                    NN.run(input);   
+                    NN.run();   
                 }
                 else{
                     text.setText("Create a new network first!");
                 }
             }
-            public void menuDeselected(MenuEvent e) {}
-            public void menuCanceled(MenuEvent e) {}
-        });
-                
-        saveMenu.addMenuListener(new MenuListener() {
-
-            public void menuSelected(MenuEvent e) {
-                if(created){
-                    
-                }
-                else{
-                    text.setText("Create a new network first!");
-                }
-            }
+            public void menuSelected(MenuEvent e) {}
             public void menuDeselected(MenuEvent e) {}
             public void menuCanceled(MenuEvent e) {}
         });
         
+        //SAVE CLICKED
+        saveMenu.addMenuListener(new MenuListener() {
+            public void actionPerformed(MenuEvent e) { 
+                if(created){
+                    //TODO
+                }
+                else{
+                    text.setText("Create a new network first!");
+                }
+            }
+            public void menuSelected(MenuEvent e) {}
+            public void menuDeselected(MenuEvent e) {}
+            public void menuCanceled(MenuEvent e) {}
+        });
+        
+        //LOAD CLICKED
+        loadMenu.addMenuListener(new MenuListener() {
+            public void actionPerformed(MenuEvent e) { 
+                if(created){
+                    //TODO
+                }
+                else{
+                    text.setText("Create a new network first!");
+                }
+            }
+            public void menuSelected(MenuEvent e) {}
+            public void menuDeselected(MenuEvent e) {}
+            public void menuCanceled(MenuEvent e) {}
+        });
+        
+        //OK CLICKED
         ok.addActionListener((ActionEvent e) -> {
             enteredText = text.getText();
             if(toTrain){
@@ -150,6 +175,18 @@ public class GUI extends JFrame{
         
     }
     
+    /******************************************************
+    ***  Method Name: fileReader
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: To read in a text file and populate array.
+    *** Method Inputs: None
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     private void fileReader(){
         Path file = null;
         JFileChooser fileChooser = new JFileChooser();
@@ -174,7 +211,6 @@ public class GUI extends JFrame{
         input = new double[inputSize];
         
         int i = 0;
-        //boolean firstChar = true; //because for some reason, the first char is always some kind of dot that resists removal
         for(String line : text){ 
             //System.out.println(line); //DEBUGGER
             double first = Double.valueOf(line.substring(0, 2)); 
@@ -185,21 +221,44 @@ public class GUI extends JFrame{
             input[i++] = second;
         }
         successful = true;
-        
     }
     
+    /******************************************************
+    ***  Method Name: setText
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Allows Network to change the text in GUI
+    *** Method Inputs: String words
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** 
+    *******************************************************/
     public void setText(String words){
         String original = text.getText();
         text.setText(original + "/n" + words);
     }
     
+    /******************************************************
+    ***  Method Name: train
+    ***  Method Author: Capri Sims
+    ******************************************************
+    *** Purpose: Trains the network based on the given text.
+    *** Method Inputs: None
+    *** Return value: None
+    ******************************************************
+    *** Date: July 21, 2016
+    ******************************************************
+    *** Possibly change this to allow for multiple outputs
+    ***     for flexibility
+    *******************************************************/
     private void train(){
                         
         double num = 0;
         double[] output = new double[1];
 
-        boolean bad = true;
-
+        //Get the number from text box as a string and change to double
         try{
             num = Double.parseDouble(enteredText);
         }
@@ -208,12 +267,13 @@ public class GUI extends JFrame{
             text.setText("Invalid!!! Enter the Expected Output as a single number.");
         }
       
+        //Put the number into a size 1 array
         output[0] = num;
-        text.setText("Training...");
+
+        //Train
         NN.train(output);
         
         toTrain = false;
     }
 }
     
-
