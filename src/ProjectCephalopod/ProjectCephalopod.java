@@ -1,9 +1,8 @@
 /******************************************************
-***  Class Name: Cephalopod 
-***  Class Author: Group 4
+***  Class Name: ProjectCephalopod 
+***  Class Author: Capri Sims
 ******************************************************
-*** Purpose: To demonstrate the use of genetic algorithms.
-*       Finds a solution to a given maze.
+*** Purpose: To initiliaze the GUI for the neural network
 ******************************************************
 *** Date: June 21, 2016
 ******************************************************
@@ -15,16 +14,8 @@ public class ProjectCephalopod {
 
 
     public static void main(String[] args) {
-        
-//        double[] input = {-.2, 1.15, .678, -.5};
-//        double[] output = {1};
-//        Network NN = new Network(input);
-//        NN.train(output);
 
         GUI box = new GUI();
-        
-  
-        
+
     }
-    
 }
