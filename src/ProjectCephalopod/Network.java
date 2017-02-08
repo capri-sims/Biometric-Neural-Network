@@ -41,7 +41,7 @@ public class Network {
     
     private int iterations = 5000;
     
-    private JTextArea text;
+    private JTextArea text = new JTextArea("");
     
     public Network(double[] input){
         
