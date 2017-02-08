@@ -85,14 +85,13 @@ public class Network {
         this.expectedOutput = expectedOutput;
         start = 0;
         //TRAINING
-        for(int j = 0; j < epochSize; j ++) //For each chunk
-            while(abs(calcError()) > 1E-5) //Until error becomes sufficiently low
-                System.out.println(j + " : " + i);
+        for(int j = 0; j < epochSize; j ++){ //For each chunk
+            while(abs(calcError()) > 1E-5){ //Until error becomes sufficiently low
                 feedForward();
                 text.setText("Training Result " + j + " : " + output[0]);
                 feedBackwards();
-                
             }
+        }
         start += 30;
     }
     
@@ -118,7 +117,6 @@ public class Network {
 
         for(int i = 0; i < epochSize; i++){
             feedForward();
-            //System.out.println("Result: " + output[0]);
             text.setText("Result "+ i + " : " + output[0]);
             start += 30;
         }
